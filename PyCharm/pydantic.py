@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import marshmallow
+
 import json
 import sys
 from datetime import date
-from marshmallow import Schema, fields
+from pydantic import BaseModel, ValidationError
 
 
 
-class School(Schema):
-    name = fields.Str(required=True)
-    tel = fields.Str(required=True)
-    date = fields.Str(required=True)
+class Work(BaseModel):
+    name: str
+    group: str
+    marks: str
 
-SchoolSchema = School()
 
 def validating(check_data):
     try:
         for smt in check_data:
-            SchoolSchema.load(smt)
+            Work(**smt)
         return True
-    except marshmallow.exceptions.ValidationError:
+    except ValidationError:
         return False
 
 
@@ -136,22 +135,18 @@ def help_man():
     print("load - загрузить данные из файла;")
     print("save - сохранить данные в файл;")
 
-def save_workers(file_name, staff):
+def save_workers(file_name, students):
     """
-    Сохранить всех работников в файл JSON.
+    Сохранение всех студентов в файл JSON.
     """
-    # Открыть файл с заданным именем для записи.
     with open(file_name, "w", encoding="utf-8") as fout:
-        # Выполнить сериализацию данных в формат JSON.
-        # Для поддержки кирилицы установим ensure_ascii=False
-        json.dump(staff, fout, ensure_ascii=False, indent=4, default=str)
+        json.dump(students, fout, ensure_ascii=False, indent=4)
 
 
 def load_workers(file_name):
     """
-    Загрузить всех работников из файла JSON.
+    Загрузка всех студентов из файла JSON.
     """
-    # Открыть файл с заданным именем для чтения.
     with open(file_name, "r", encoding="utf-8") as fin:
         return json.load(fin)
 
